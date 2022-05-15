@@ -8,17 +8,21 @@
 //bombMap is the map with:
 //bomb emplacement marked as -3
 //and 0 when there is nothing
-//1, 2, 3.. when there is 1, 2, 3.. bombs around
+//1, 2, 3... when there is 1, 2, 3... bombs around
 
 //userMap is the map that the user see with:
-// 0 to revelated cells with no bombs
+// 1, 2, 3... to revelated cells with 1, 2, 3... bombs around
+// 0 to revelated cells with no bomb
 //-1 to the unrevealed cells
 //-2 to your flags
 //-3 to bombs that you touched
 
 
-void display(int size, int Map[size][size]){  
+void display(int size, int map[][size]){  
   //function that display the map passed in the argument
+  //size : int of the size of the map
+  //map : 2d array of int of the map that we want to display
+  
   //first line with the letters 
 	printf("    ");
 	for (int i = 0; i<size; i++){
@@ -41,20 +45,20 @@ void display(int size, int Map[size][size]){
 
     //display inside of the tab
     for (int x = 0; x < size; x++){
-      if(Map[y][x]==0){
+      if(map[y][x]==0){
         printf("~ | "); //revelated cells with no bombs
       }
-      else if(Map[y][x]==-1){
+      else if(map[y][x]==-1){
         printf("  | "); //unrevealed cells
       }
-      else if(Map[y][x]==-2){
+      else if(map[y][x]==-2){
         printf("X | "); //flags
       }
-      else if(Map[y][x]==-3){
+      else if(map[y][x]==-3){
         printf("# | "); //bombs touched
       }
       else{
-        printf("%d | ", Map[y][x]); //number of bombs around
+        printf("%d | ", map[y][x]); //number of bombs around
       }
     }
 
@@ -68,27 +72,55 @@ void display(int size, int Map[size][size]){
 }
 
 
+int bomb_count(int size, int map[][size], int clickEmplacement[2], int n){
+  //function that counts the number of element n around 
+  //size : int of the size of the map
+  //map : 2d array of int of the map we are searching in
+  //clickEmplacement : array of int with 2 numbers with the coordinates of the case we are searching around
+  //n : int of the element we are searching
+  //return a int of the number of element n around
+  
+  int tot = 0;
+  for (int j = -1; j < 2; j++){
+    for (int i = -1; i < 2; i++){
+      if (clickEmplacement[0] + i >= 0 && clickEmplacement[0] + i < size && clickEmplacement[1] + j >= 0 && clickEmplacement[1] + j < size){//if the case is inside the map
+        if (map[clickEmplacement[1] + j][clickEmplacement[0] + i] == n){//and is a flag add 1
+          tot++;
+        }
+      }
+    }
+  }
+  return tot;
+}
+
+
 void create_map(int size, int bMap[][size], int nBomb, int clickEmplacement[2]){
   //function that create the bombs emplacements on a empty map
-  //bMap is the bomb map empty
-  //size is the size of the map
-  //nBomb is the number of bombs 
-  //clickEmplacement is a array with the coordinates of the user first click
-  srand(time(NULL));
-  int bombGenerated = 0;
-  bMap[clickEmplacement[1]][clickEmplacement[0]] = -3;//place a temporary bomb at the user click emplacement
+  //size : int of the size of the map
+  //bMap : 2d array of int of the bomb map empty (see begining of the program)
+  //nBomb : int of the number of bombs 
+  //clickEmplacement : array of int with 2 numbers with the coordinates of the user first click
 
-  //add bombs until there is nBomb in the 2d array
-  while(bombGenerated != nBomb){
-    int x = rand()%size;
-    int y = rand()%size;
-    if (bMap[y][x] == 0){
-      bMap[y][x] = -3;
-      bombGenerated ++;
+  srand(time(NULL));
+  do{
+    //fill the map with 0
+    for (int y = 0; y < size; y++){
+      for (int x = 0; x < size; x++){
+        bMap[y][x] = 0;
       }
-  }
+    }
+    int bombGenerated = 0;
+    //add bombs until there is nBomb in the 2d array
+    while(bombGenerated != nBomb){
+      int x = rand()%size;
+      int y = rand()%size;
+      if (bMap[y][x] == 0){
+        bMap[y][x] = -3;
+        bombGenerated ++;
+      }
+    }
+  }while (bomb_count(size, bMap, clickEmplacement, -3) != 0);//verify that there is no bomb around the user first click
   
-  bMap[clickEmplacement[1]][clickEmplacement[0]] = 0;//remove the temporary bomb
 
   //add the numbers
   for (int y = 0; y < size; y++){
@@ -108,24 +140,12 @@ void create_map(int size, int bMap[][size], int nBomb, int clickEmplacement[2]){
 }
 
 
-int bomb_count(int size, int uMap[][size], int clickEmplacement[2]){
-  //function that counts the number of bombs around 
-  int tot = 0;
-  for (int j = -1; j < 2; j++){
-    for (int i = -1; i < 2; i++){
-      if (clickEmplacement[0] + i >= 0 && clickEmplacement[0] + i < size && clickEmplacement[1] + j >= 0 && clickEmplacement[1] + j < size){//if the case is inside the map
-        if (uMap[clickEmplacement[1] + j][clickEmplacement[0] + i] == -2){//and is a flag add 1
-          tot++;
-        }
-      }
-    }
-  }
-  return tot;
-}
-
-
 void discover(int size, int bMap[][size], int uMap[][size], int clickEmplacement[2]){
   //function that discover the cases around and where you clicked
+  //size : int of the size of the map
+  //bMap : 2d array of int of the bomb map (see begining of the program)
+  //uMap : 2d array of int of the user map (see begining of the program)
+  //clickEmplacement : array of int with 2 numbers with the coordinates of the case we are dicovering
 
   //if its outside the map return
   if (clickEmplacement[0] < 0 || clickEmplacement[0] >= size || clickEmplacement[1] < 0 || clickEmplacement[1] >= size){
@@ -153,7 +173,7 @@ void discover(int size, int bMap[][size], int uMap[][size], int clickEmplacement
   //else look at all the undiscovered cases around where you clicked if there is more or the 
   //same amounts of flags as bombs around the case
   if (uMap[clickEmplacement[1]][clickEmplacement[0]] >= 0){
-    int nBombs = bomb_count(size, uMap, clickEmplacement);
+    int nBombs = bomb_count(size, uMap, clickEmplacement, -2);
     if (nBombs >= uMap[clickEmplacement[1]][clickEmplacement[0]]){
       for (int j = -1; j < 2; j++){
         for (int i = -1; i < 2; i++){
@@ -170,6 +190,26 @@ void discover(int size, int bMap[][size], int uMap[][size], int clickEmplacement
 }
 
 
+int game(int size, int uMap[][size]){
+  //function that determine if the user lost
+  //size : int of the size of the map
+  //uMap : 2d array of int of the user map (see begining of the program)
+  //return a int 1 if the user did not lost and 0 if the user lost
+  
+  for (int y = 0; y < size; y++){
+    for (int x = 0; x < size; x++){
+      if (uMap[y][x] == -3){
+        return 0;
+      }
+    }
+  }
+  return 1;
+}
+
+
+
+
+
 int main(){
 	int bombMap[SIZE][SIZE];
   int userMap[SIZE][SIZE];
@@ -177,38 +217,19 @@ int main(){
   for (int y = 0; y < SIZE; y++){
     for (int x = 0; x < SIZE; x++){
       userMap[y][x] = -1;
-      bombMap[y][x] = 0;
     }
   }
   int userClick[2] = {0, 0};
+  
   create_map(SIZE, bombMap, BOMBS, userClick);
-
-  //tests
-
-  
-  
-	display(SIZE, userMap);
   
 	discover(SIZE, bombMap, userMap, userClick);
 
-  printf("\n\n");
-  display(SIZE, userMap);
-  
-  int x, y;
-  scanf("%d", &x);
-  scanf("%d", &y);
-  userMap[y][x] = -2;
-  
-  printf("\n\n");
   display(SIZE, userMap);
 
-  scanf("%d", &x);
-  scanf("%d", &y);
-  int userClick2[2] = {x, y};
-  discover(SIZE, bombMap, userMap, userClick2);
-  
-  printf("\n\n");
-  display(SIZE, userMap);
+  while(game(SIZE, userMap)){
+    
+  }
   
   return 0;
 }
