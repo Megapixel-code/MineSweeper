@@ -22,7 +22,8 @@ void display(int size, int map[][size]){
   //function that display the map passed in the argument
   //size : int of the size of the map
   //map : 2d array of int of the map that we want to display
-  
+
+  ////////////////////////////////////////////////////////////////////////////////////////////printf("\e[1;1H\e[2J");
   //first line with the letters 
 	printf("    ");
 	for (int i = 0; i<size; i++){
@@ -194,20 +195,72 @@ int game(int size, int uMap[][size]){
   //function that determine if the user lost
   //size : int of the size of the map
   //uMap : 2d array of int of the user map (see begining of the program)
-  //return a int 1 if the user did not lost and 0 if the user lost
-  
+  //return a int 0 if the user did not lost, -1 if the user lost, 1 if the user won.
+
+  int win = 1;
   for (int y = 0; y < size; y++){
     for (int x = 0; x < size; x++){
       if (uMap[y][x] == -3){
-        return 0;
+        return -1;
+      }
+      if (uMap[y][x] != -1){
+        win = 0;
       }
     }
   }
-  return 1;
+  return win;
 }
 
 
+int play(){
+  //choosing difficulty
+  int dificulty = -1;
 
+  //printf("\e[1;1H\e[2J");//clear console
+  printf("Minesweeper Game\n\nChoose dificulty:\nEasy : 0 | Medium : 1\nYour answer : ");
+  scanf("%d", &dificulty);
+  printf("\n\n");
+  while (!(dificulty == 0 || dificulty == 1)){
+    //printf("\e[1;1H\e[2J");
+    printf("Wrong input\n");
+    printf("Minesweeper Game\n\nChoose dificulty:\nEasy : 0 | Medium : 1\nYour answer : ");
+    scanf("%d", &dificulty);
+  }
+  //printf("\e[1;1H\e[2J");
+
+  //initialize game 
+  int size, bombs;
+  if (dificulty == 0){
+    size = 9;
+    bombs = 10;
+  }
+  else if (dificulty == 1){
+    size = 16;
+    bombs = 40;
+  }
+
+  int bombMap[size][size];
+  int userMap[size][size];
+
+  for (int y = 0; y < size; y++){
+    for (int x = 0; x < size; x++){
+      userMap[y][x] = -1;
+    }
+  }
+
+  
+  display(size, userMap);//display empty screen
+  char letter;
+  int number;
+  printf("Choose your first move (e.g. : A1, B3, ...) : ");
+  scanf("%c", &letter);
+  
+  printf("%c", letter);
+  
+  //printf("%d%d", x-65, y-1);
+  
+  return 0;
+}
 
 
 int main(){
@@ -221,15 +274,8 @@ int main(){
   }
   int userClick[2] = {0, 0};
   
-  create_map(SIZE, bombMap, BOMBS, userClick);
-  
-	discover(SIZE, bombMap, userMap, userClick);
 
-  display(SIZE, userMap);
-
-  while(game(SIZE, userMap)){
-    
-  }
+  while(play()){}
   
   return 0;
 }
