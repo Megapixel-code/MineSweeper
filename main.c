@@ -20,7 +20,7 @@ void display(int size, int map[][size]){
   //size : int of the size of the map
   //map : 2d array of int of the map that we want to display
 
-  ////////////////////////////////////////////////////////////////////////////////////////////printf("\e[1;1H\e[2J");
+  printf("\e[1;1H\e[2J");
   //first line with the letters 
 	printf("    ");
 	for (int i = 0; i<size; i++){
@@ -171,8 +171,8 @@ void discover(int size, int bMap[][size], int uMap[][size], int clickEmplacement
   //else look at all the undiscovered cases around where you clicked if there is more or the 
   //same amounts of flags as bombs around the case
   if (uMap[clickEmplacement[1]][clickEmplacement[0]] >= 0){
-    int nBombs = bomb_count(size, uMap, clickEmplacement, -2);
-    if (nBombs >= uMap[clickEmplacement[1]][clickEmplacement[0]]){
+    int nFlags = bomb_count(size, uMap, clickEmplacement, -2);
+    if (nFlags >= uMap[clickEmplacement[1]][clickEmplacement[0]]){
       for (int j = -1; j < 2; j++){
         for (int i = -1; i < 2; i++){
           if (!(i == 0 && j == 0) && uMap[clickEmplacement[1] + j][clickEmplacement[0] + i] == -1){
@@ -188,20 +188,20 @@ void discover(int size, int bMap[][size], int uMap[][size], int clickEmplacement
 }
 
 
-int game(int size, int uMap[][size]){
+int check(int size, int uMap[][size]){
   //function that determine if the user lost
   //size : int of the size of the map
   //uMap : 2d array of int of the user map (see begining of the program)
-  //return a int 0 if the user did not lost, -1 if the user lost, 1 if the user won.
+  //return a int -1 if the user did not lost, 0 if the user lost, 1 if the user won.
 
   int win = 1;
   for (int y = 0; y < size; y++){
     for (int x = 0; x < size; x++){
       if (uMap[y][x] == -3){
-        return -1;
+        return 0;
       }
       if (uMap[y][x] != -1){
-        win = 0;
+        win = -1;
       }
     }
   }
@@ -209,29 +209,31 @@ int game(int size, int uMap[][size]){
 }
 
 
+void clearBuffer() {
+	char c;
+	do {
+		c = getchar();
+	} while (c != '\n' && c != EOF);
+}
+
+
 int play(){
   //choosing difficulty
-  int dificulty = -1;
-
-  //printf("\e[1;1H\e[2J");//clear console
-  printf("Minesweeper Game\n\nChoose dificulty:\nEasy : 0 | Medium : 1\nYour answer : ");
-  scanf("%d", &dificulty);
-  printf("\n\n");
-  while (!(dificulty == 0 || dificulty == 1)){
-    //printf("\e[1;1H\e[2J");
-    printf("Wrong input\n");
-    printf("Minesweeper Game\n\nChoose dificulty:\nEasy : 0 | Medium : 1\nYour answer : ");
-    scanf("%d", &dificulty);
+  int difficulty = -1;
+  while (!(difficulty == 0 || difficulty == 1)){
+    printf("\e[1;1H\e[2J");//clear console
+    printf("Minesweeper Game\n\nChoose difficulty:\nEasy : 0 | Medium : 1\nYour answer : ");
+    scanf("%d", &difficulty);
+    clearBuffer();
   }
-  //printf("\e[1;1H\e[2J");
 
   //initialize game 
   int size, bombs;
-  if (dificulty == 0){
+  if (difficulty == 0){
     size = 9;
     bombs = 10;
   }
-  else if (dificulty == 1){
+  else if (difficulty == 1){
     size = 16;
     bombs = 40;
   }
@@ -245,34 +247,82 @@ int play(){
     }
   }
 
-  int number;
-  char letter;
+  int number = -1;
+  char letter = -1;
   display(size, userMap);//display empty screen
-  printf("Choose your first move (e.g. : A1, B3, ...) : ");
+  while (letter - 65 < 0 || letter - 65 >= size || number - 1 < 0 || number - 1 >= size){
+    display(size, userMap);
+    printf("Choose your first move (e.g. : A1, K4, ...) : ");
+    scanf(" %c%d", &letter, &number);
+    clearBuffer();
+  }
+  
+  int first_move[2] = {letter - 65, number - 1};
+  create_map(size, bombMap, bombs, first_move);
+  discover(size, bombMap, userMap, first_move);
 
-  scanf(" %c", &letter);
-  scanf("%d", &number);
-  
-  printf("\nletter : (%c)\nnumber : (%d)", letter, number);
-  
-  //printf("%d%d", x-65, y-1);
-  
-  return 0;
+  while((check(size, userMap)) == -1){
+    int discover_or_flag = -1;
+    while(!(discover_or_flag == 0 || discover_or_flag == 1)){
+      display(size, userMap);
+      printf("What do you want to do : \n0 : discover a emplacement    1 : place/remove a flag\nYour answer : ");
+      scanf(" %d", &discover_or_flag);
+      clearBuffer();
+    }
+
+    if (discover_or_flag == 0){
+      letter = -1;
+      number = -1;
+      while (letter - 65 < 0 || letter - 65 >= size || number - 1 < 0 || number - 1 >= size){
+        display(size, userMap);
+        printf("Choose your move (e.g. : A1, K4, ...) : ");
+        scanf(" %c%d", &letter, &number);
+        clearBuffer();
+      }
+      int move[2] = {letter - 65, number - 1};
+      discover(size, bombMap, userMap, move);
+    }
+    else {
+      letter = -1;
+      number = -1;
+      while (letter - 65 < 0 || letter - 65 >= size || number - 1 < 0 || number - 1 >= size){
+        display(size, userMap);
+        printf("Choose the case you want to flag (e.g. : A1, K4, ...) : ");
+        scanf(" %c%d", &letter, &number);
+        clearBuffer();
+      }
+      int move[2] = {letter - 65, number - 1};
+      //place flag if there is undiscovered cell else if there is alerady a flag place undiscovered terrain back
+      if (userMap[move[1]][move[0]] == -1){
+        userMap[move[1]][move[0]] = -2;
+      }
+      else if(userMap[move[1]][move[0]] == -2){
+        userMap[move[1]][move[0]] = -1;
+      }
+    }
+  }
+
+  if ((check(size, userMap)) == 0){
+    display(size, userMap);//display the bomb that killed the player
+    printf("You lost! ¯\\_(ツ)_/¯\n");
+  }
+  else{
+    display(size, userMap);//display the map completed
+    printf("you win!");
+  }
+
+  int play_again = -1;
+  while(!(play_again == 0 || play_again == 1)){
+    printf("Do you want to play again?\n0 : No   1 : Yes\n Your answer : ");
+    scanf(" %d", &play_again);
+    clearBuffer();
+  }  
+  return play_again;
 }
 
 
 int main(){
-	int bombMap[SIZE][SIZE];
-  int userMap[SIZE][SIZE];
-
-  for (int y = 0; y < SIZE; y++){
-    for (int x = 0; x < SIZE; x++){
-      userMap[y][x] = -1;
-    }
-  }
-  int userClick[2] = {0, 0};
-
-  while(play()){}
   
+  while(play()){}
   return 0;
 }
