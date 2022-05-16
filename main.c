@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SIZE 9
-#define BOMBS 10
-
 //bombMap is the map with:
 //bomb emplacement marked as -3
 //and 0 when there is nothing
@@ -248,14 +245,15 @@ int play(){
     }
   }
 
-  
-  display(size, userMap);//display empty screen
-  char letter;
   int number;
+  char letter;
+  display(size, userMap);//display empty screen
   printf("Choose your first move (e.g. : A1, B3, ...) : ");
-  scanf("%c", &letter);
+
+  scanf(" %c", &letter);
+  scanf("%d", &number);
   
-  printf("%c", letter);
+  printf("\nletter : (%c)\nnumber : (%d)", letter, number);
   
   //printf("%d%d", x-65, y-1);
   
@@ -273,7 +271,6 @@ int main(){
     }
   }
   int userClick[2] = {0, 0};
-  
 
   while(play()){}
   
