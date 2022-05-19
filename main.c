@@ -200,7 +200,7 @@ int check(int size, int uMap[][size]){
       if (uMap[y][x] == -3){
         return 0;
       }
-      if (uMap[y][x] != -1){
+      if (uMap[y][x] == -1){
         win = -1;
       }
     }
@@ -308,12 +308,12 @@ int play(){
   }
   else{
     display(size, userMap);//display the map completed
-    printf("you win!");
+    printf("you win!\n");
   }
 
   int play_again = -1;
   while(!(play_again == 0 || play_again == 1)){
-    printf("Do you want to play again?\n0 : No   1 : Yes\n Your answer : ");
+    printf("Do you want to play again?\n0 : No   1 : Yes\nYour answer : ");
     scanf(" %d", &play_again);
     clearBuffer();
   }  
