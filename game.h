@@ -76,17 +76,14 @@ extern void discover(int size, int bMap[][size], int uMap[][size], int clickEmpl
 
   //else look at all the undiscovered cases around where you clicked if there is more or the 
   //same amounts of flags as bombs around the case
-  if (uMap[clickEmplacement[1]][clickEmplacement[0]] >= 0){
-    int nFlags = bomb_count(size, uMap, clickEmplacement, -2);
-    if (nFlags >= uMap[clickEmplacement[1]][clickEmplacement[0]]){
-      for (int j = -1; j < 2; j++){
-        for (int i = -1; i < 2; i++){
-          if (!(i == 0 && j == 0) && uMap[clickEmplacement[1] + j][clickEmplacement[0] + i] == -1){
-            int temp[2];
-            temp[0] = clickEmplacement[0] + i;
-            temp[1] = clickEmplacement[1] + j;
-            discover(size, bMap, uMap, temp);
-          }
+  if (uMap[clickEmplacement[1]][clickEmplacement[0]] == 0){
+    for (int j = -1; j < 2; j++){
+      for (int i = -1; i < 2; i++){
+        if (!(i == 0 && j == 0) && uMap[clickEmplacement[1] + j][clickEmplacement[0] + i] == -1){
+          int temp[2];
+          temp[0] = clickEmplacement[0] + i;
+          temp[1] = clickEmplacement[1] + j;
+          discover(size, bMap, uMap, temp);
         }
       }
     }
