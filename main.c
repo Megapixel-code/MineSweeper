@@ -136,7 +136,7 @@ int main(){
   int a, b;
   a = 9;
   b = 1;
-  add_score(a, b, "didier");
+  display_scores();
   return 0;
 }
 

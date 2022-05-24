@@ -1,4 +1,8 @@
-void add_score(int size, int time, char name[]){
+extern void add_score(int size, int time, char name[]){
+  //function that add the user score if he has a good enough score
+  //size : int of the size of the map the user had a score we want to save
+  //time : int of the time the user took to do sweep the mines
+  //name : str of the name of the user
   //verify there is no * in name and no space and len name < 30 
   
   char fileName[20] = "";
@@ -108,7 +112,6 @@ void add_score(int size, int time, char name[]){
   }
   fclose(file);
 }
-
 
 
 /* 

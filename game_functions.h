@@ -144,7 +144,7 @@ extern void menu(){
   }
 }
 
-//menu (jouer => choix difficulté / retour, choix quitter, options => triche? ) faits 1/2
+//menu (jouer => choix difficulté / retour, choix quitter, options => triche?, scores) faits 1/2
 //debut jeux (cree les maps et premier coup) faits
 //jeu (appeler play) faits
 //affichage win lose + rejouer faits
@@ -152,6 +152,11 @@ extern void menu(){
 
 
 int play(int size, int nBombs, int uMap[][size], int bMap[][size], int gameMod){
-  //mod : int 1 if the auto-discover is on (see begining of main.c), 0 if desactivated
+  //function that plays the game once the game started
+  //size : int of the size of the map
+  //nBomb : int of the number of bombs 
+  //uMap : 2d array of int of the user map empty (see begining of main)
+  //bMap : 2d array of int of the bomb map empty (see begining of main)
+  //gameMod : int 1 if the auto-discover is on (see begining of main.c), 0 if desactivated
   //return int 0 if the user lost and 1 if the user won
 }
