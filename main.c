@@ -135,8 +135,8 @@ int main(){
   //while(play()){}
   int a, b;
   a = 9;
-  b = 10;
-  add_score(a, b, "test");
+  b = 1;
+  add_score(a, b, "didier");
   return 0;
 }
 

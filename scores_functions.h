@@ -1,5 +1,5 @@
 void add_score(int size, int time, char name[]){
-  //verify there is no * in name and no \n and no space and len name < 30 
+  //verify there is no * in name and no space and len name < 30 
   
   char fileName[20] = "";
   if (size == 9){
@@ -43,6 +43,7 @@ void add_score(int size, int time, char name[]){
         temp[0] = buffer[i];
         strcat(iName, temp);
       }
+      strcpy(names[j], iName);
       i++;
       strcpy(iCharNum, "");
       for (i; buffer[i] != '*'; i++){
@@ -61,13 +62,34 @@ void add_score(int size, int time, char name[]){
         iIntNum += (((int)(iCharNum[x])) - 48) * power;
         power /= 10;
       }
+      scores[j] = iIntNum;
     }
   }
   fclose(file);
 
   //insert player in the scores if he has a good enough score
+  if (scores[9] > time){
+    return;
+  }
   
-  
+  int place;
+  for (int i = 0; scores[i] > time; i++){
+    place = i + 1;
+  }
+
+  int timeTemp1 = time;
+  int timeTemp2;
+  char nameTemp1[30];
+  char nameTemp2[30];
+  strcpy(nameTemp1, name);
+  for (int i = place; i < 10; i++){
+    timeTemp2 = scores[i];
+    scores[i] = timeTemp1;
+    timeTemp1 = timeTemp2;
+    strcpy(nameTemp2, names[i]);
+    strcpy(names[i], nameTemp1);
+    strcpy(nameTemp1, nameTemp2);
+  }
 
   //writing to file  
   
