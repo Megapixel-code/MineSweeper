@@ -1,7 +1,7 @@
 extern void create_map(int size, int bMap[][size], int nBomb, int clickEmplacement[2]){
   //function that create the bombs emplacements on a empty map
   //size : int of the size of the map
-  //bMap : 2d array of int of the bomb map empty (see begining of the program)
+  //bMap : 2d array of int of the bomb map empty (see begining of main)
   //nBomb : int of the number of bombs 
   //clickEmplacement : array of int with 2 numbers with the coordinates of the user first click
 
@@ -44,12 +44,13 @@ extern void create_map(int size, int bMap[][size], int nBomb, int clickEmplaceme
 }
 
 
-extern void discover(int size, int bMap[][size], int uMap[][size], int clickEmplacement[2]){
+extern void discover(int size, int bMap[][size], int uMap[][size], int clickEmplacement[2], int mod){
   //function that discover the cases around and where you clicked
   //size : int of the size of the map
-  //bMap : 2d array of int of the bomb map (see begining of the program)
-  //uMap : 2d array of int of the user map (see begining of the program)
+  //bMap : 2d array of int of the bomb map (see begining of main.c)
+  //uMap : 2d array of int of the user map (see begining of main.c)
   //clickEmplacement : array of int with 2 numbers with the coordinates of the case we are dicovering
+  //mod : int 1 if the auto-discover is on (see begining of main.c), 0 if desactivated
 
   //if its outside the map return
   if (clickEmplacement[0] < 0 || clickEmplacement[0] >= size || clickEmplacement[1] < 0 || clickEmplacement[1] >= size){
@@ -74,16 +75,32 @@ extern void discover(int size, int bMap[][size], int uMap[][size], int clickEmpl
     return;
   }
 
-  //else look at all the undiscovered cases around where you clicked if there is more or the 
-  //same amounts of flags as bombs around the case
+  //else if the case is has no bombs around discover around
   if (uMap[clickEmplacement[1]][clickEmplacement[0]] == 0){
     for (int j = -1; j < 2; j++){
       for (int i = -1; i < 2; i++){
-        if (!(i == 0 && j == 0) && uMap[clickEmplacement[1] + j][clickEmplacement[0] + i] == -1){
+        if (uMap[clickEmplacement[1] + j][clickEmplacement[0] + i] == -1){
           int temp[2];
           temp[0] = clickEmplacement[0] + i;
           temp[1] = clickEmplacement[1] + j;
-          discover(size, bMap, uMap, temp);
+          discover(size, bMap, uMap, temp, 0);
+        }
+      }
+    }
+  }
+
+  //else if the mod from gamefunctions
+  else if (mod){
+    int nFlags = bomb_count(size, uMap, clickEmplacement, -2);
+    if (nFlags >= uMap[clickEmplacement[1]][clickEmplacement[0]]){
+      for (int j = -1; j < 2; j++){
+        for (int i = -1; i < 2; i++){
+          if (uMap[clickEmplacement[1] + j][clickEmplacement[0] + i] == -1){
+            int temp[2];
+            temp[0] = clickEmplacement[0] + i;
+            temp[1] = clickEmplacement[1] + j;
+            discover(size, bMap, uMap, temp, 0); 
+          }
         }
       }
     }

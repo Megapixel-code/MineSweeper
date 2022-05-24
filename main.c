@@ -1,10 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
+#include <math.h>
 
-#include "display.h"
-#include "init.h"
-#include "game.h"
+#include "display_function.h"
+#include "init_functions.h"
+#include "run_functions.h"
+#include "scores_functions.h"
+//#include "game_function.h"
 
 
 //bombMap is the map with:
@@ -18,6 +22,9 @@
 //-1 to the unrevealed cells
 //-2 to your flags
 //-3 to bombs that you touched
+
+//auto-discover mod : if you click on a discovered case, discover the cells around where you clicked if there is the same amount of 
+//                    flags than bombs around the cell, if you missplaced a flag you may lose
 
 
 int play(){
@@ -62,7 +69,7 @@ int play(){
   
   int first_move[2] = {letter - 65, number - 1};
   create_map(size, bombMap, bombs, first_move);
-  discover(size, bombMap, userMap, first_move);
+  discover(size, bombMap, userMap, first_move, 1);
 
   while((check(size, userMap)) == -1){
     int discover_or_flag = -1;
@@ -83,7 +90,7 @@ int play(){
         clearBuffer();
       }
       int move[2] = {letter - 65, number - 1};
-      discover(size, bombMap, userMap, move);
+      discover(size, bombMap, userMap, move, 1);
     }
     else {
       letter = -1;
@@ -119,14 +126,17 @@ int play(){
     printf("Do you want to play again?\n0 : No   1 : Yes\nYour answer : ");
     scanf(" %d", &play_again);
     clearBuffer();
-  }  
+  }
   return play_again;
 }
 
 
 int main(){
-  
-  while(play()){}
+  //while(play()){}
+  int a, b;
+  a = 9;
+  b = 10;
+  add_score(a, b, "test");
   return 0;
 }
 
