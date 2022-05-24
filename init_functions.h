@@ -47,3 +47,21 @@ extern int bomb_count(int size, int map[][size], int clickEmplacement[2], int n)
   }
   return tot;
 }
+
+
+extern int get_mod(){
+  FILE *file;
+
+  //reading the content of the setting
+  file = fopen("settings.txt", "r");
+  if (file == NULL){
+    printf("Error opening file\n");
+    exit(1);
+  }
+  
+  char buffer[10];
+  fgets(buffer, 10, file);
+  fclose(file);
+  
+  return (int)(buffer[0] - 48);
+}

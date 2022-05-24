@@ -72,13 +72,18 @@ extern void add_score(int size, int time, char name[]){
   fclose(file);
 
   //insert player in the scores if he has a good enough score
-  if (scores[9] > time){
+  int last = 0;
+  while (scores[last] != 0 && last < 10){
+    last++;
+  }
+  last--;
+  if (scores[last] < time && last == 9){
     return;
   }
   
-  int place;
-  for (int i = 0; scores[i] > time; i++){
-    place = i + 1;
+  int place = 0;
+  while (time > scores[place] && place <= last){
+    place++;
   }
 
   int timeTemp1 = time;

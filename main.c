@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
+#include <unistd.h>
 #include <string.h>
 #include <math.h>
 
@@ -8,7 +10,7 @@
 #include "init_functions.h"
 #include "run_functions.h"
 #include "scores_functions.h"
-//#include "game_function.h"
+#include "game_functions.h"
 
 
 //bombMap is the map with:
@@ -27,6 +29,7 @@
 //                    flags than bombs around the cell, if you missplaced a flag you may lose
 
 
+/*
 int play(){
   //choosing difficulty
   int difficulty = -1;
@@ -129,14 +132,12 @@ int play(){
   }
   return play_again;
 }
+*/
 
 
 int main(){
-  //while(play()){}
-  int a, b;
-  a = 9;
-  b = 1;
-  display_scores();
+  //menu();
+  add_score(9, 110, "test");
   return 0;
 }
 

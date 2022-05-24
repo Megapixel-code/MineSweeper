@@ -1,3 +1,4 @@
+/*
 extern void menu(){
   int end=0;
   int choice=-1;
@@ -11,11 +12,7 @@ extern void menu(){
     if(choice == 0){
       while(next!=1){
 
-        /*
-
-        L'utilisateur choisit les dimensions de la map et le nombre de bombes
-
-        */
+        //L'utilisateur choisit les dimensions de la map et le nombre de bombes
         
         int difficulty = -1;
         while (!(difficulty == 0 || difficulty == 1)){
@@ -50,11 +47,7 @@ extern void menu(){
           }
         }
 
-        /*
-
-        L'utilisateur choisit le mode de jeu (avec triche ou non)
-
-        */
+        //L'utilisateur choisit le mode de jeu (avec triche ou non)
 
         int gameMod=-1;
         while (gameMod !=0 || gameMod !=1){
@@ -63,13 +56,9 @@ extern void menu(){
             scanf("%d", &gameMod);
             clearBuffer();
         }
-        
-        /*
 
-        Initialisation de la Map
+        //Initialisation de la Map
 
-        */
-        
         int bombMap[size][size];
         int userMap[size][size];
       
@@ -91,22 +80,14 @@ extern void menu(){
         
         int first_move[2] = {letter - 65, number - 1};
         create_map(size, bombMap, bombs, first_move);
-        
-        /*
 
-        initialisation d'un chronomètre
-
-        */
+        //initialisation d'un chronomètre
 
         clock_t debut, fin ;
         long clk_tck = CLOCKS_PER_SEC ;
         double difference ;
         
-        /*
-
-        Place au Gaming !!!
-
-        */
+        //Place au Gaming !!!
 
         int result;
         debut=clock();
@@ -120,12 +101,8 @@ extern void menu(){
           printf("You win, votre score est : %.3f",difference);
         }
         
-        /*
+        //Restart or not a game
 
-        Restart or not a game
-
-        */
-        
         next=-1;
         while(!(next == 0 || next == 1)){
           printf("Do you want to play again?\n0 : No   1 : Yes\nYour answer : ");
@@ -143,8 +120,9 @@ extern void menu(){
     choice=-1;
   }
 }
+*/
 
-//menu (jouer => choix difficulté / retour, choix quitter, options => triche?, scores) faits 1/2
+//menu (jouer => choix difficulté / retour, choix quitter, options => triche?, reset scores, scores) faits 1/2
 //debut jeux (cree les maps et premier coup) faits
 //jeu (appeler play) faits
 //affichage win lose + rejouer faits
@@ -159,4 +137,154 @@ int play(int size, int nBombs, int uMap[][size], int bMap[][size], int gameMod){
   //bMap : 2d array of int of the bomb map empty (see begining of main)
   //gameMod : int 1 if the auto-discover is on (see begining of main.c), 0 if desactivated
   //return int 0 if the user lost and 1 if the user won
+  for (int i = 0; i<100000; i++){
+    printf(" ");
+  }
+  printf("\n");
+  return 1;
+}
+
+
+extern int ask(int a, int b, char question[]){
+  int answer=-1;
+  while(!(answer >= a && answer <= b)){
+    printf("\e[1;1H\e[2J");//clear console
+    printf("%s", question);
+    printf("\n\nYour answer : ");
+    scanf(" %d", &answer);
+    clearBuffer();
+  }
+  return answer;
+}
+
+
+extern void first_move(int size, int bMap[][size], int uMap[][size], int nBombs, int gameMod){
+  for (int y = 0; y < size; y++){
+    for (int x = 0; x < size; x++){
+      uMap[y][x] = -1;
+    }
+  }
+
+  int number = -1;
+  char letter = -1;
+  display(size, uMap);//display empty map
+  while (letter - 65 < 0 || letter - 65 >= size || number - 1 < 0 || number - 1 >= size){
+    display(size, uMap);
+    printf("Choose your first move (e.g. : A1, K4, ...) : ");
+    scanf(" %c%d", &letter, &number);
+    clearBuffer();
+  }
+  int posFirstMove[2] = {letter - 65, number - 1};
+  create_map(size, bMap, nBombs, posFirstMove);
+  discover(size, bMap, uMap, posFirstMove, gameMod);
+}
+
+
+extern void menu(){
+  char question[1000];
+  int answer;
+
+  while (answer != 3){
+    strcpy(question, "====================  Welcome to MineSweeper!  ====================\n\n\nPlay : 0    Look at the best scores : 1    Options : 2    Leave : 3");
+    answer = ask(0, 3, question);
+
+    //if the user want to play
+    if (answer == 0){
+      strcpy(question, "==============================  Please choose difficulty!  ==============================\n\n\nEasy (9x9 and 10 bombs) : 0    Hard (16x16 and 40 bombs) : 1    Custom : 2    Go back : 3");
+      answer = ask(0, 3, question);
+      //if the user dont want to go back
+      if (answer != 3){
+        int size;
+        int nBombs;
+        //if difficulty is Easy
+        if (answer == 0){
+          size = 9;
+          nBombs = 10;
+        }
+        //if difficulty is Hard
+        else if (answer == 1){
+          size = 16;
+          nBombs = 40;
+        }
+        //if difficulty is Custom
+        else{
+          strcpy(question, "====  Please choose the size of the map (between 4 and 30)  ====\n\n");
+          size = ask(4, 30, question);
+          
+          snprintf(question, 1000, "====  Please choose the number of bombs (between 0 and %d)  ====\n\n", ((size * size) - 9));
+          nBombs = ask(0, ((size * size) - 9), question);
+        }
+        int bombMap[size][size];
+        int userMap[size][size];
+
+        //set the game
+        int gameMod = get_mod();
+        first_move(size, bombMap, userMap, nBombs, gameMod);
+
+        //set timer
+        struct timeval  begin, end;
+        gettimeofday(&begin, NULL);
+        
+        //lunch the game
+        int win = play(size, nBombs, userMap, bombMap, gameMod);
+
+        //get the time elapsed during the solving
+        gettimeofday(&end, NULL);
+        int time = (double)(end.tv_sec - begin.tv_sec);
+        
+        if (win && ((size == 9 && nBombs == 10) || (size == 16 && nBombs == 40))){
+          //win message
+          snprintf(question, 1000, "========  You won in %d seconds!  ========\n", time);
+          strcat(question, "=====  Do you want to save your time?  =====\n\n\nYes : 0    No : 1");
+          answer = ask(0, 1, question);
+          //if user want to save
+          if (answer == 0){
+            char name[30];
+            strcpy(name, "*");
+            while (strchr(name, '*') != NULL){
+              printf("\e[1;1H\e[2J");//clear console
+              printf("=============================  Save score  =============================");
+              printf("\n\nEnter your name (no * and no space in the name, max 30 char) : ");
+              scanf(" %s", name);
+            }
+            add_score(size, time, name);
+            return;
+          }
+        }
+        else if (win){
+          //win custom message
+          display(size, userMap);
+          char message[100];
+          strcpy(message, "\n");
+          for (int i = 0; i < (size-2)/2; i++){
+            strcat(message, "====");
+          }
+          strcat(message, "  You won!  ");
+          for (int i = 0; i < (size-2)/2; i++){
+            strcat(message, "====");
+          }
+          strcat(message, "\n");
+          printf("%s", message);
+          sleep(10);
+        }
+        else{
+          //lose message
+          display(size, userMap);
+          char message[100];
+          strcpy(message, "\n==");
+          for (int i = 0; i < (size-2)/2; i++){
+            strcat(message, "====");
+          }
+          strcat(message, "  You lost  ");
+          for (int i = 0; i < (size-2)/2; i++){
+            strcat(message, "====");
+          }
+          strcat(message, "==\n");
+          printf("%s", message);
+          sleep(10);
+        }
+      }
+    }
+    else if(1){}
+  }
 }
