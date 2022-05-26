@@ -33,13 +33,22 @@ extern void display(int size, int map[][size]){
         printf("  | "); //unrevealed cells
       }
       else if(map[y][x]==-2){
-        printf("X | "); //flags
+        printf("\x1B[36m");
+        printf("X"); //flags
+        printf("\x1B[0m");
+        printf(" | "); 
       }
       else if(map[y][x]==-3){
-        printf("# | "); //bombs touched
+        printf("\x1B[31m");
+        printf("#"); //bombs touched
+        printf("\x1B[0m");
+        printf(" | "); 
       }
       else{
-        printf("%d | ", map[y][x]); //number of bombs around
+        printf("\x1B[33m");
+        printf("%d", map[y][x]); //number of bombs around
+        printf("\x1B[0m");
+        printf(" | "); 
       }
     }
 
