@@ -2,8 +2,7 @@ extern void add_score(int size, int time, char name[]){
   //function that add the user score if he has a good enough score
   //size : int of the size of the map the user had a score we want to save
   //time : int of the time the user took to do sweep the mines
-  //name : str of the name of the user
-  //verify there is no * in name and no space and len name < 30 
+  //name : str of the name of the user (no * and space in name) 
   
   char fileName[20] = "";
   if (size == 9){
@@ -119,16 +118,18 @@ extern void add_score(int size, int time, char name[]){
 }
 
 
-/* 
-
-Utiliser fread avec un tableau(de chaine de caractere)  = dinguerie faut juste convertir des chaines de caractere en float/long faudra aussi faire un truc avec les \0 a priori = faire des tests
-
-
-fprintf pour rentrer pseudo etc ça a l'air pas mal
-
-
-ducoup a priori on met a la suite chaine de caractère + ptete séparer d'un espace 
-mais en vrai meme pas normalement a la suite séparer des \0 c'est bon et ducoup on les releve toute, on prend les paires (pour prendre que les temps) et on les convertis en long, on trouve le plus petit et c'est l'highscore
-
-ptete pour faire plus clean on met un \n dans les chaine de caractere mais faut trouver un moyen de l'enlever quand on convertit en long
-*/
+extern void reset_scores(){
+  //function that reset all the scores saved
+  //return nothing
+  FILE *file;
+  file = fopen("scores9x9.txt", "w");
+  char output[500] = "_ 0*_ 0*_ 0*_ 0*_ 0*_ 0*_ 0*_ 0*_ 0*_ 0*\n";
+  for (int i = 0; output[i] != '\n'; i++) {
+    fputc(output[i], file);
+  }
+  
+  file = fopen("scores16x16.txt", "w");
+  for (int i = 0; output[i] != '\n'; i++) {
+    fputc(output[i], file);
+  }
+}

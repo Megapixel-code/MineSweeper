@@ -132,16 +132,57 @@ extern void menu(){
 int play(int size, int nBombs, int uMap[][size], int bMap[][size], int gameMod){
   //function that plays the game once the game started
   //size : int of the size of the map
-  //nBomb : int of the number of bombs 
+  //nBomb : int of the number of bombs
   //uMap : 2d array of int of the user map empty (see begining of main)
   //bMap : 2d array of int of the bomb map empty (see begining of main)
   //gameMod : int 1 if the auto-discover is on (see begining of main.c), 0 if desactivated
   //return int 0 if the user lost and 1 if the user won
-  for (int i = 0; i<100000; i++){
-    printf(" ");
+  
+  while(check(size, uMap) == -1){
+    char letter;
+    int number;
+    int discover_or_flag = -1;
+    while(!(discover_or_flag == 0 || discover_or_flag == 1)){
+      display(size, uMap);
+      printf("\n\nWhat do you want to do : \n\n0 : discover a emplacement    1 : place/remove a flag\n\nYour answer : ");
+      scanf(" %d", &discover_or_flag);
+      clearBuffer();
+    }
+
+    //user want to discover a case
+    if (discover_or_flag == 0){
+      letter = -1;
+      number = -1;
+      while (letter - 65 < 0 || letter - 65 >= size || number - 1 < 0 || number - 1 >= size){
+        display(size, uMap);
+        printf("\nChoose your move (e.g. : A1, K4, ...) : ");
+        scanf(" %c%d", &letter, &number);
+        clearBuffer();
+      }
+      int move[2] = {letter - 65, number - 1};
+      discover(size, bMap, uMap, move, gameMod);
+    }
+    //user want to place or remove a flag somewhere
+    else {
+      letter = -1;
+      number = -1;
+      while (letter - 65 < 0 || letter - 65 >= size || number - 1 < 0 || number - 1 >= size){
+        display(size, uMap);
+        printf("\nChoose the case you want to flag (e.g. : A1, K4, ...) : ");
+        scanf(" %c%d", &letter, &number);
+        clearBuffer();
+      }
+      int move[2] = {letter - 65, number - 1};
+      //place flag if there is undiscovered cell else if there is alerady a flag place undiscovered terrain back
+      if (uMap[move[1]][move[0]] == -1){
+        uMap[move[1]][move[0]] = -2;
+      }
+      else if(uMap[move[1]][move[0]] == -2){
+        uMap[move[1]][move[0]] = -1;
+      }
+    }
   }
-  printf("\n");
-  return 1;
+  return check(size, uMap);
 }
 
 
@@ -188,7 +229,7 @@ extern void menu(){
     strcpy(question, "====================  Welcome to MineSweeper!  ====================\n\n\nPlay : 0    Look at the best scores : 1    Options : 2    Leave : 3");
     answer = ask(0, 3, question);
 
-    //if the user want to play
+    //---------------------------user want to play
     if (answer == 0){
       strcpy(question, "==============================  Please choose difficulty!  ==============================\n\n\nEasy (9x9 and 10 bombs) : 0    Hard (16x16 and 40 bombs) : 1    Custom : 2    Go back : 3");
       answer = ask(0, 3, question);
@@ -248,7 +289,6 @@ extern void menu(){
               scanf(" %s", name);
             }
             add_score(size, time, name);
-            return;
           }
         }
         else if (win){
@@ -265,7 +305,9 @@ extern void menu(){
           }
           strcat(message, "\n");
           printf("%s", message);
-          sleep(10);
+          printf("\n\npress enter to continue...");
+          char a;
+          scanf("%c", &a);
         }
         else{
           //lose message
@@ -281,10 +323,58 @@ extern void menu(){
           }
           strcat(message, "==\n");
           printf("%s", message);
-          sleep(10);
+          printf("\n\npress enter to continue...");
+          char a;
+          scanf("%c", &a);
         }
       }
     }
-    else if(1){}
+
+    //---------------------------user want to look at the best scores
+    
+    else if(answer == 1){
+      display_scores();
+      printf("\n\npress enter to continue...");
+      char a;
+      scanf("%c", &a);
+    }
+
+    //---------------------------user want to see options
+    
+    else if(answer == 2){
+      strcpy(question, "=====  Settings  =====\n\n\nActivate auto-discover mode : 0    Deactivate auto-discover mode : 1    Reset best scores : 2");
+      answer = ask(0, 2, question);
+      //user want to activate auto-discover mode
+      if (answer == 0){
+        FILE *file;
+        file = fopen("settings.txt", "w");
+        fputs("1", file);
+        fclose(file);
+      }
+      //user want to deactivate auto-discover mode
+      else if (answer == 1){
+        FILE *file;
+        file = fopen("settings.txt", "w");
+        fputs("0", file);
+        fclose(file);
+      }
+      //user want to reset all the scores saved
+      else{
+        strcpy(question, "Are you sure you want to do that? You will lose every score you saved.\n\n0 : Yes    1 : Return to menu");
+        answer = ask(0, 1, question);
+        if (answer == 0){
+          reset_scores();
+        }
+      }
+    }
+
+    //---------------------------user want to quit the program
+
+    else{
+      printf("\e[1;1H\e[2J");//clear console
+      printf("Goodbye\n");
+      sleep(5);
+      return;
+    }
   }
 }
