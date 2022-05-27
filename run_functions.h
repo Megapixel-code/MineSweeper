@@ -60,6 +60,7 @@ extern void discover(int size, int bMap[][size], int uMap[][size], int clickEmpl
   //if its undiscovered discover it
   if (uMap[clickEmplacement[1]][clickEmplacement[0]] == -1){
     uMap[clickEmplacement[1]][clickEmplacement[0]] = bMap[clickEmplacement[1]][clickEmplacement[0]];
+    mod = 0;
   }
 
   //if all the cases around are discovered return

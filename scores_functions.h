@@ -127,9 +127,11 @@ extern void reset_scores(){
   for (int i = 0; output[i] != '\n'; i++) {
     fputc(output[i], file);
   }
+  fclose(file);
   
   file = fopen("scores16x16.txt", "w");
   for (int i = 0; output[i] != '\n'; i++) {
     fputc(output[i], file);
   }
+  fclose(file);
 }

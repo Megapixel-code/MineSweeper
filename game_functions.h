@@ -240,8 +240,7 @@ extern void menu(){
 
     else{
       printf("\e[1;1H\e[2J");//clear console
-      printf("Goodbye\n");
-      sleep(5);
+      printf("User has left the game\n");
       return;
     }
   }
