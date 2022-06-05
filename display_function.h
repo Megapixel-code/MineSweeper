@@ -81,6 +81,9 @@ extern void display_scores(){
   fgets(buffer9, 500, scores9);
   fgets(buffer16, 500, scores16);
 
+  fclose(scores9);
+  fclose(scores16);
+  
   int caret9 = 0;
   int caret16 = 0;
   int lineSize;
@@ -98,6 +101,9 @@ extern void display_scores(){
     }
     caret9++;
     
+    printf("s");
+    lineSize++;
+    
     for (lineSize; lineSize < 42; lineSize++){
       printf(" ");
     }
@@ -106,6 +112,6 @@ extern void display_scores(){
       printf("%c", buffer16[caret16]);
     }
     caret16++;
-    printf("\n");
+    printf("s\n");
   }
 }

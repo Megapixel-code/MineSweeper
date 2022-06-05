@@ -55,6 +55,12 @@ int play(int size, int uMap[][size], int bMap[][size], int gameMod){
 
 
 extern int ask(int a, int b, char question[]){
+  //function that ask the user a question and get the answer
+  //a : int first number allowed
+  //b : int last number allowed
+  //question : array of char that we print before asking the answer
+  //a <= b
+  //return the user answer
   int answer=-1;
   while(!(answer >= a && answer <= b)){
     printf("\e[1;1H\e[2J");//clear console
@@ -68,6 +74,13 @@ extern int ask(int a, int b, char question[]){
 
 
 extern void first_move(int size, int bMap[][size], int uMap[][size], int nBombs, int gameMod){
+  //function that ask the user the first move he want to play
+  //size : int of the size of the map
+  //bMap : 2d array of int of the bomb map empty (see begining of main)
+  //uMap : 2d array of int of the user map empty (see begining of main)
+  //nBombs : int number of bombs on the map
+  //gameMod : int 1 if the auto-discover is on (see begining of main.c), 0 if desactivated
+  //return nothing
   for (int y = 0; y < size; y++){
     for (int x = 0; x < size; x++){
       uMap[y][x] = -1;
@@ -90,6 +103,7 @@ extern void first_move(int size, int bMap[][size], int uMap[][size], int nBombs,
 
 
 extern void menu(){
+  //main loop that call other functions
   char question[1000];
   int answer;
 
@@ -210,7 +224,7 @@ extern void menu(){
     //---------------------------user want to see options
     
     else if(answer == 2){
-      strcpy(question, "=====  Settings  =====\n\n\nActivate auto-discover mode : 0    Deactivate auto-discover mode : 1    Reset best scores : 2");
+      strcpy(question, "=========  Settings  =========\n\n\nActivate auto-discover mode : 0    Deactivate auto-discover mode : 1    Reset best scores : 2");
       answer = ask(0, 2, question);
       //user want to activate auto-discover mode
       if (answer == 0){

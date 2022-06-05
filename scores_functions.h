@@ -3,6 +3,7 @@ extern void add_score(int size, int time, char name[]){
   //size : int of the size of the map the user had a score we want to save
   //time : int of the time the user took to do sweep the mines
   //name : str of the name of the user (no * and space in name) 
+  //return nothing
   
   char fileName[20] = "";
   if (size == 9){

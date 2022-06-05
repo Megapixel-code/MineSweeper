@@ -1,4 +1,5 @@
 extern void clearBuffer() {
+  //clear the scanf buffer so it doesnt loop in other functions
 	char c;
 	do {
 		c = getchar();
@@ -50,6 +51,11 @@ extern int bomb_count(int size, int map[][size], int clickEmplacement[2], int n)
 
 
 extern int get_mod(){
+  //function that get the number in the settings.txt
+  //return 0 if the auto-discover mod is off 
+  //return 1 if the auto-discover mod is on
+  //look auto-discover mod in main.c comments 
+  
   FILE *file;
 
   //reading the content of the setting
