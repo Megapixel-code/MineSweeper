@@ -12,7 +12,7 @@ If you flag all of the mines touching a number, chording on the number opens the
 When you want to use the program write in the console:\
 make --> compile the program\
 make run --> run the compiled program\
-make clean --> clean the compiled file\
+make clean --> clean the compiled file
 
 ### Names :
 CHANTEPIE Ivan\
